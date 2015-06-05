@@ -1,0 +1,7 @@
+IEEGPortal Matlab Analysis Toolbox
+This toolbox was designed to provide tools that facilitate analysis and interface with the IEEGPortal
+
+Features:
+Parallel processing
+
+Toolbox Tree
