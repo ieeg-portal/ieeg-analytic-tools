@@ -1,4 +1,6 @@
 function data = getAllData(dataset,channels)
+%gets data in IEEGDataset dataset for specified channels.
+%NOTE: If large dataset, use getExtendedData
 
 blockLen = 5000;
 duration = dataset.channels(1).get_tsdetails.getDuration;
