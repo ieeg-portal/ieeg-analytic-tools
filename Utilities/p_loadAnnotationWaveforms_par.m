@@ -1,20 +1,21 @@
-function [spikeWV, spikeInfo] = clusterSpikesMulti_par(params,spikeSuffix)
-
+function [wave, info] = p_loadAnnotationWaveforms_par(params,fn,layerName)
+%Function will load all waveforms in (or in
+%filename fn.mat) and save into fn.mat.
+%wave and info are cell arrays
 datasetNames = params.datasetID;
 IEEGID = params.IEEGid;
 IEEGPWD = params.IEEGpwd;
-%Function will load spikes saved into .mat files and cluster all, keeping
-%track of dataset origination
+%time before and after
 timeBefore = 0.04;
 timeAfter = 0.16;
 
 %% get total spikes
-allSpikeWF = cell(numel(datasetNames),1);
-allSpikeInfo = cell(numel(datasetNames),1);
+wave = cell(numel(datasetNames),1);
+info = cell(numel(datasetNames),1);
 %% get spike data
 parfor i = 1:numel(datasetNames)
     try
-        lvar = load(sprintf('%s_spikeWV.mat',datasetNames{i}));
+        lvar = load(fn{i});
         fprintf('Found Mat for %s\n',datasetNames{i});
         spikeWV = lvar.spikeWV;
         spikeInfo = lvar.spikeInfo;
@@ -39,11 +40,11 @@ parfor i = 1:numel(datasetNames)
         end
         parsave(sprintf('%s_spikeWV.mat',datasetNames{i}),spikeWV,spikeInfo);
     end
-    allSpikeWF{i} = spikeWV;
-    allSpikeInfo{i} = spikeInfo;
+    wave{i} = spikeWV;
+    info{i} = spikeInfo;
 end
 
 %cluster waveforms
 %E = evalclusters(spikes,'kmeans','GAP','klist',[5:30]);
-spikeWV = cell2mat(allSpikeWF);
-spikeInfo = cell2mat(allSpikeInfo);
+spikeWV = cell2mat(wave);
+spikeInfo = cell2mat(info);

@@ -30,7 +30,6 @@ parfor i = 1:numel(datasetNames)
         subj_ch_keep =  allCh(~ismember(allCh,ch_remove{i}));
         parsave(sprintf('%s_rAC.mat',datasetNames{i}),subj_ch_remove,subj_ch_keep,meanSlope);
     end
-    clearvars -except subj_ch_remove meanSlope subj_ch_keep
     ch_remove{i} = subj_ch_remove
     stat{i} = meanSlope;
     ch_keep{i} = subj_ch_keep
