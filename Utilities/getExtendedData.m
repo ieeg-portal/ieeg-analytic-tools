@@ -1,6 +1,13 @@
 function data = getExtendedData(dataset,idxs, ch)
-%Function will get data in pieces if necessary, similar arguments as
+%Function will get data in pieces by channel if necessary, similar arguments as
 %getvalues
+
+% Note: if this function throws errors, try getting less data (reducing indices). 
+
+%dataset = IEEGDataset object
+%idxs = indices of data to get (numeric array)
+%ch = numeric array of channels
+
 total = numel(idxs)*numel(ch);
 dataLim = 500*130*2000;
 if total < dataLim

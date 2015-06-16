@@ -5,6 +5,7 @@ IEEGPWD = params.IEEGpwd;
 ch_keep = cell(numel(datasetNames),1);
 ch_remove = cell(numel(datasetNames),1);
 stat = cell(numel(datasetNames),1);
+mult = 4;
 warning('off','all')
 parfor i = 1:numel(datasetNames)
     fprintf('Checking %s\n',datasetNames{i});
@@ -26,7 +27,7 @@ parfor i = 1:numel(datasetNames)
             meanSlope(ch) = mean(abs(diff(LL)));
         end
         allCh = 1:numChannels;
-        subj_ch_remove = find(meanSlope>(mean(meanSlope) + 5*std(meanSlope)))
+        subj_ch_remove = find(meanSlope>(mean(meanSlope) + mult*std(meanSlope)))
         subj_ch_keep =  allCh(~ismember(allCh,ch_remove{i}));
         parsave(sprintf('%s_rAC.mat',datasetNames{i}),subj_ch_remove,subj_ch_keep,meanSlope);
     end

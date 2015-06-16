@@ -1,14 +1,11 @@
-function [spikeTimesUSec, spikeChannels] = spike_LL(dataset,channels, winLen,mult,filtFlag,filtCheck)
-% Usage: spike_LL(dataset,channels, winLen,mult,filtFlag,filtCheck)
-% Input
-%   dataset : IEEGDataset Object
-%   channels : channels to detect spikes over
-%   winLen : window length
-%   mult : multiple of std to threshold
-%   filtFlag : 1 to filter
-%   filtCheck : 1 to enable manual checking of filtered signal (can be stopped mid run)
+function [spikeTimesUSec, spikeChannels] = spike_LL(dataset,channels, params)
+%Usage: standalone_spike_LL(dataset,layerName, channels, winLen,thres,filtFlag)
+rawThreshold = params.spikeLL.rawThreshold;
+winLen = params.spikeLL.winLen;
+mult = params.spikeLL.mult;
+FILTFLAG = params.spikeLL.FILTFLAG;
+FILTCHECK = params.spikeLL.FILTCHECK;
 
-close all;
 %common params
 fs = dataset.channels(channels(1)).sampleRate;
 duration = dataset.channels(channels(1)).get_tsdetails.getDuration/1e6;
@@ -20,10 +17,10 @@ winLen = tmp/fs;
 
 %calculate LL for all channels
 try
-    load(sprintf('%s_LL%d-%0.1d.mat',dataset.snapName,filtFlag,winLen));
+    load(sprintf('%s_LL%d-%0.1d.mat',dataset.snapName,FILTFLAG,winLen));
 catch
     fprintf('No saved mat detected, recalculating features...\n');
-    feat = calcFeature_LL(dataset,1:numel(dataset.channels),'LL',winLen,sprintf('LL%d-%0.1d',filtFlag,winLen),filtFlag,filtCheck);
+    feat = calcFeature_LL(dataset,1:numel(dataset.channels),'LL',winLen,sprintf('LL%d-%0.1d',FILTFLAG,winLen),FILTFLAG,FILTCHECK);
 end
 fprintf('Detecting spikes...\n');
 eventIdxs = [];
@@ -72,7 +69,21 @@ for c = channels
     divAvgFeat = divPrevWindow.*divAvg;
     thres = mult * std(divAvgFeat);
     [pks, eventIdx]=findpeaks(divAvgFeat,'minpeakheight',thres,'minpeakdistance',round(0.1*fs)); 
-    
+    toRemove = zeros(numel(pks),1);;
+    for i = 1:numel(pks);
+       %pull each spike window
+       tmp = dataset.getvalues(max(eventIdx(i)-.05*fs,1):min(eventIdx(i)+.05*fs,size(feat,1)),c);
+       if max(abs(tmp)) > rawThreshold
+           toRemove(i) = 1;
+       end
+       %remove if max abs value is > 700 uv for 
+    end
+    fprintf('False spikes removed: %d \n', sum(toRemove));
+    toRemove = logical(toRemove);
+    if sum(toRemove) > 0
+        pks(toRemove) = [];
+        eventIdx(toRemove) = [];
+    end
     eventIdxs = [eventIdxs; eventIdx];
     eventChannels = [eventChannels; ones(numel(unique(eventIdx)/fs*1e6),1)*c];
 end
