@@ -69,7 +69,7 @@ for c = channels
     divAvgFeat = divPrevWindow.*divAvg;
     thres = mult * std(divAvgFeat);
     [pks, eventIdx]=findpeaks(divAvgFeat,'minpeakheight',thres,'minpeakdistance',round(0.1*fs)); 
-    toRemove = zeros(numel(pks),1);;
+    toRemove = zeros(numel(pks),1);
     for i = 1:numel(pks);
        %pull each spike window
        tmp = dataset.getvalues(max(eventIdx(i)-.05*fs,1):min(eventIdx(i)+.05*fs,size(feat,1)),c);
