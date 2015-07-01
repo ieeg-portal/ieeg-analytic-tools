@@ -1,8 +1,10 @@
 function data = getAllData(dataset,channels)
-%gets data in IEEGDataset dataset for specified channels.
-%NOTE: If large dataset, use getExtendedData
+%Usage: data = getAllData(IEEGDataset,channels)
+%Gets all data in IEEGDataset dataset for specified channels.
+%NOTE: If large dataset, use getExtendedData, which gets data one channel
+%at a time
 
-blockLen = 5000;
+blockLen = 3600;
 duration = dataset.channels(1).get_tsdetails.getDuration;
 fs = dataset.sampleRate;
 
@@ -13,6 +15,10 @@ data = cell(numBlocks,1);
 for i = 1:numBlocks
     startPt = 1+(i-1)*blockLen;
     endPt = i*blockLen;
-    data{i} = dataset.getvalues(startPt:min(endPt,numPoints),channels);
+    try
+        data{i} = dataset.getvalues(startPt:min(endPt,numPoints),channels);
+    catch
+        data{i} = dataset.getvalues(startPt:min(endPt,numPoints),channels);
+    end
 end
 data = cell2mat(data);

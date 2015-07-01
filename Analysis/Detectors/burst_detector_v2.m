@@ -49,7 +49,7 @@ eventTimesUSec = [];
 eventChannels = [];
 totEvents = 0;
 reverseStr = '';
-for i = 1:100%numBlocks
+for i = 1:numBlocks
     curPt = 1+ (i-1)*blockLenSecs*fs;
     endPt = (i*blockLenSecs)*fs;
     tmpData = dataset.getvalues(curPt:endPt,channels);
@@ -150,24 +150,12 @@ aboveThreshPad = aboveThresh;
   %map chan idx back to channels
   chan = channels(chan);
   
-%   %remove spikes by thresholding max line length
-%   idx = [];
-%   for i = 1:size(evStartIdxs,1)
-%       maxFeat = max(max(featVals(evStartIdxs(i):evEndIdxs(i),:)));
-%       if maxFeat>maxfeatThresh
-%           idx = [idx i];
-%       end
-%   end
-%   startTimesSec(idx) = [];
-%   endTimesSec(idx) = [];
-%   chan(idx) = [];
-  
   duration = endTimesSec - startTimesSec;
   idx = (duration<(params.minDur) | (duration>params.maxDur));
   startTimesSec(idx) = [];
   endTimesSec(idx) = [];
   chan(idx) = [];
   
-  
+  chan = num2cell(chan);
 end
 

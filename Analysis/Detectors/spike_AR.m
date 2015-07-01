@@ -1,6 +1,6 @@
-function [eventTimesUSec, eventChannels] = spike_AR(dataset,channels,mult)
+function [eventTimesUSec, eventChannels] = spike_AR(dataset,channels,params)
 
-%   USAGE: [eventTimesUSEc eventChannels] = spike_AR(dataset, channels,mult)
+%   USAGE: [eventTimesUSEc eventChannels] = spike_AR(dataset, channels,params)
 % 
 %   This function will detect spikes in channels of a given dataset, and upload to layerName annotation layer on the portal.
 %   Each spike occurrence will be returned in an array of times eventTimesUSec (in microsecs) and eventChannels (idx)
@@ -13,7 +13,8 @@ function [eventTimesUSec, eventChannels] = spike_AR(dataset,channels,mult)
 %   INPUT:
 %   'dataset'   -   IEEGDataset object
 %   'channels'  -   [Nx1] array of channel indices
-%   'mult'      -   integer to multiply by standard deviation for threshold
+%   'params'     
+%       params.spikeAR.mult -   integer to multiply by standard deviation for threshold
 
 %   OUTPUT:
 %   'eventTimesUSec'    -   times of events in microsecds
@@ -26,6 +27,7 @@ function [eventTimesUSec, eventChannels] = spike_AR(dataset,channels,mult)
 
 %initialize
 close all;
+mult = params.spikeAR.mult;
 plotGraphs=0; %set to 1 to show plots: if running batch, set to 0
 numChannels = numel(dataset.channels);
 eventTimesUSec = [];
@@ -44,7 +46,7 @@ totalIter = numel(channels)*numBlocks;
 iter = 0;
 for i = channels
     %split into blocks and load 1 hr at a time
-    for b = 1:numBlocks
+    for block = 1:numBlocks
         iter = iter + 1;
         percentDone = iter/totalIter*100;
         msg = sprintf('Processed: %3.1f%%%%', percentDone);
@@ -52,21 +54,21 @@ for i = channels
         reverseStr = repmat(sprintf('\b'), 1, length(msg)-1);
         
         
-        startPt = (b-1)*blockLenPts + 1;
-        endPt = min(b*blockLenPts,numPoints);
+        startPt = (block-1)*blockLenPts + 1;
+        endPt = min(block*blockLenPts,numPoints);
         data = dataset.getvalues(startPt:endPt,i);
         d1 = data;
         if sum(isnan(d1))/numel(data) < 0.25 %is less than 25% of window is missing, then run, else skip
             d1(isnan(d1)) = 0;
 
-            %Lowpass filter - [1 70 Hz]
+            %filter - [1 70 Hz]
             ord = 4;
             try
                 [b, a] = butter(ord,[70/(fs/2)],'low');
                 d1 = filtfilt(b,a,d1);
             catch
                 try
-                   [b, a] = butter(ord,[55/(fs/2)],'low');
+                   [b, a] = butter(ord,[50/(fs/2)],'low');
                    d1 = filtfilt(b,a,d1);
                 catch
                 end
@@ -154,22 +156,33 @@ for i = channels
             %   NOTE: for large datasets, this may crash matlab since too much data to
             %   plot.
 
-            if plotGraphs==1
+            if plotGraphs==1 %only for I022_P009_D01
+                layern = dataset.annLayer(3).name
+                [~, times,ch] = getAllAnnots(dataset,layern)
+                pad = 3;
                 figure(3)
-                ax = zeros(2,1);
-                ax(1) = subplot(3,1,1);
-                plot(data);
-                hold on;
-                plot(yhat,'r')
-                legend('y','yhat')
-                ax(2) = subplot(3,1,2);
-                plot(data-yhat);
-                title('e_n')
-                ax(3) = subplot(3,1,3);
-                plot(d_n)
-                hline(thres,'r')
-                title('d_n');
-                linkaxes(ax,'x')
+                for iter = 1:size(times,1)
+                    clf;
+                    idx= round((times(iter,1)/1e6-pad)*fs:(times(iter,2)/1e6+pad)*fs);
+                    idx(idx<=0) = [];
+                    ax = zeros(2,1);
+                    ax(1) = subplot(3,1,1);
+                    plot(d1(idx));
+                    vline(pad*fs)
+                    hold on;
+                    plot(yhat(idx),'r')
+                    hold off;
+                    legend('y','yhat')
+                    ax(2) = subplot(3,1,2);
+                    plot(e_n(idx));
+                    title('e_n')
+                    ax(3) = subplot(3,1,3);
+                    plot(d_n(idx))
+                    hline(thres,'r')
+                    title('d_n');
+                    linkaxes(ax,'x')
+                    pause;
+                end
             end
 
             %find peaks

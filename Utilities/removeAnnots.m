@@ -12,12 +12,14 @@ for i = 1:numel(datasets)
     tmp = cellfun(@(x)(~isempty(x)),tmp);
     layerIdxs = find(tmp~=0);
         for j = layerIdxs
-            fprintf('Removing layer %s ...',layerNames{j});
-            try
-                datasets(i).removeAnnLayer(layerNames{j});
-                fprintf('...done!\n');
-            catch
-                fprintf('...fail!\n');
+            resp = input(sprintf('Remove layer %s ...? (y/n): ',layerNames{j}),'s');
+            if strcmp(resp,'y')
+                try
+                    datasets(i).removeAnnLayer(layerNames{j});
+                    fprintf('...done!\n');
+                catch
+                    fprintf('...fail!\n');
+                end
             end
         end
     catch

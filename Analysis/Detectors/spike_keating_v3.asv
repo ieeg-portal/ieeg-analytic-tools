@@ -244,9 +244,6 @@ function [spikeData padLength] = spike_keating_v3(rawdata, rate, startT, init, S
     avgFeat = mean(abs(feat))
     thres = avgFeat + 4 * std(feat);
     [pks, eventIdx]=findpeaks(feat,'minpeakheight',thres,'minpeakdistance',spkdur); 
-    for i = 1:size(spikeData,1)
-        %KEEP SPIKEDATA THAT PASSES SLOPE
-    end
     
   
 end
