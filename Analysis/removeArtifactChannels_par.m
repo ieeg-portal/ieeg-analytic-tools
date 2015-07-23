@@ -28,7 +28,7 @@ parfor i = 1:numel(datasetNames)
         end
         allCh = 1:numChannels;
         subj_ch_remove = find(meanSlope>(mean(meanSlope) + mult*std(meanSlope)))
-        subj_ch_keep =  allCh(~ismember(allCh,ch_remove{i}));
+        subj_ch_keep =  allCh(~ismember(allCh,subj_ch_remove));
         parsave(sprintf('%s_rAC.mat',datasetNames{i}),subj_ch_remove,subj_ch_keep,meanSlope);
     end
     ch_remove{i} = subj_ch_remove
