@@ -1,9 +1,14 @@
-function [spikeData padLength] = spike_keating_v3(rawdata, rate, startT, init, SPKDURATION, ABSTHRESH, AFTDUR)
+function [spikeData, padLength] = spike_ku_v4(rawdata, rate, startT, init,params)
   %SPIKER_V3  Updated spike detection algorithm
   
   % SPKDURATION =  in ms (spike duration  less than this ##)
   % ABSTHRESH = absolute threshold (uV) min spike size ##  
   % AFTDUR = in ms (after hyperpolarization wave must be longer than this)
+  
+  SPKDURATION = params.spkku.SPKDURATION;
+  ABSTHRESH = params.spkku.ABSTHRESH;
+  AFTDUR = params.spkku.AFTDUR;
+  LLTHRESH = params.spkku.LLTHRESH;
  
   % OUT = SPIKER_V2(DATA, RATE, STARTT, INIT) returns a nx2 array of spiketimes
   % and spike amplitudes. The returned times are in seconds and the amplitudes
@@ -38,7 +43,8 @@ function [spikeData padLength] = spike_keating_v3(rawdata, rate, startT, init, S
   % values and modified the code only to the extend that it is more efficient
   % and that it can be used on large datasets using multiple calls.
   
-  % small modifications by Hoameng Ung 5/2014
+  % small modifications by Hoameng Ung 5/2014 
+  % v4 - added slope thresholds Hoameng Ung 5/2015
   
   persistent B1 A1 B2 A2 padding leftpad thresMap thresMapIdx
 
@@ -238,8 +244,19 @@ function [spikeData padLength] = spike_keating_v3(rawdata, rate, startT, init, S
     end
   end
   spikeData = spikeData(1:ix,:);
-     
   
+  %% check slopes
+    feat = smooth(abs(diff(rawdata)),3);
+    medFeat = median(abs(feat));
+    %feat = sort(abs(feat/medFeat));
+    %cutoff = feat(round(numel(feat)*PERCENT));
+    thres = LLTHRESH; %set cutoff at 90%
+    [~, slopePeaks]=findpeaks(feat/medFeat,'minpeakheight',thres,'minpeakdistance',spkdur); 
+    idx = logical(arrayfun(@(x)sum(x(:,1)>slopePeaks-0.10*rate& x(:,1)<slopePeaks+0.10*rate),spikeData(:,1)*rate));
+    numBeforeSlopeFilter = size(spikeData,1);
+    spikeData = spikeData(idx,:);
+    numAfterSlopeFilter = size(spikeData,1);
+    spikeData=spikeData(:,1);
 end
 
 function [p, t] = FindThePeaks(s)

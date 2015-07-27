@@ -1,25 +1,7 @@
-function [spikeWV, spikeInfo] = loadSpikesMulti_par(params,saveSuffix,spikeSuffix)
-%spikes without timeBefore and timeAfter pads will not be included
-datasetNames = params.datasetID;
-IEEGID = params.IEEGid;
-IEEGPWD = params.IEEGpwd;
-%Function will load spikes saved into .mat files and cluster all, keeping
-%track of dataset origination
-timeBefore = 0.04;
-timeAfter = 0.16;
+function [eegdata, eegInfo] = getEEG(dataset,timesUSec,channels,timeBefore,timeAfter)
 
 %% get total spikes
-allSpikeWF = cell(numel(datasetNames),1);
-allSpikeInfo = cell(numel(datasetNames),1);
-%% get spike data
-for i = 1:numel(datasetNames)
-    try
-        lvar = load(sprintf('%s_%s.mat',datasetNames{i},saveSuffix));
-        fprintf('Found Mat for %s\n',datasetNames{i});
-        spikeWV = lvar.spikeWV;
-        spikeInfo = lvar.spikeInfo;
-    catch
-        session=IEEGSession(datasetNames{i},IEEGID,IEEGPWD);
+session=IEEGSession(datasetNames{i},IEEGID,IEEGPWD);
         fprintf('Getting spikes from %s\n',session.data.snapName);
         %load spike times
         a = load([session.data.snapName '_' spikeSuffix '.mat']);

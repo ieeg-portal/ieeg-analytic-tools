@@ -2,8 +2,8 @@ function [eventTimesUSec, eventChannels] = spike_AR(dataset,channels,params)
 
 %   USAGE: [eventTimesUSEc eventChannels] = spike_AR(dataset, channels,params)
 % 
-%   This function will detect spikes in channels of a given dataset, and upload to layerName annotation layer on the portal.
-%   Each spike occurrence will be returned in an array of times eventTimesUSec (in microsecs) and eventChannels (idx)
+%   This function will detect spikes in channels of a given dataset, and upload to layerName annotation layer on the portal. NOTE THAT IT IS INCOMPLETE
+%   Each spike occurrence will be returned in an array of times eventTimesUSec (in microsecs) and eventChannels (idx). 
 %   The algorithm is based off of Acir 2004 and is as follows:
 %	1. Bandpass filter data 1-70 Hz
 %	2. Model with autoregressive model of order 5 with Burg's lattice-based method
@@ -24,7 +24,8 @@ function [eventTimesUSec, eventChannels] = spike_AR(dataset,channels,params)
 %
 %   History:
 %   8/22/2014:  commented code more thoroughly: Hoameng Ung
-
+%   TO DO:
+%	Incorporate time varying autoregressive processes
 %initialize
 close all;
 mult = params.spikeAR.mult;

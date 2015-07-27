@@ -1,4 +1,4 @@
-function [spikeData padLength] = spike_keating_v3(rawdata, rate, startT, init, SPKDURATION, ABSTHRESH, AFTDUR)
+function [spikeData padLength] = spike_ku_v3(rawdata, rate, startT, init, SPKDURATION, ABSTHRESH, AFTDUR,LLTHRESH)
   %SPIKER_V3  Updated spike detection algorithm
   
   % SPKDURATION =  in ms (spike duration  less than this ##)
@@ -38,7 +38,8 @@ function [spikeData padLength] = spike_keating_v3(rawdata, rate, startT, init, S
   % values and modified the code only to the extend that it is more efficient
   % and that it can be used on large datasets using multiple calls.
   
-  % small modifications by Hoameng Ung 5/2014
+  % small modifications by Hoameng Ung 5/2014 
+  % v4 - added slope thresholds Hoameng Ung 5/2015
   
   persistent B1 A1 B2 A2 padding leftpad thresMap thresMapIdx
 
@@ -240,12 +241,15 @@ function [spikeData padLength] = spike_keating_v3(rawdata, rate, startT, init, S
   spikeData = spikeData(1:ix,:);
   
   %% check slopes
-    feat = abs(diff(diff(rawdata)));
-    avgFeat = mean(abs(feat))
-    thres = avgFeat + 4 * std(feat);
-    [pks, eventIdx]=findpeaks(feat,'minpeakheight',thres,'minpeakdistance',spkdur); 
+    feat = smooth(abs(diff(rawdata)),3);
+    medFeat = median(abs(feat));
+    %feat = sort(abs(feat/medFeat));
+    %cutoff = feat(round(numel(feat)*PERCENT));
+    thres = LLTHRESH; %set cutoff at 90%
+    [pks, slopePeaks]=findpeaks(feat/medFeat,'minpeakheight',thres,'minpeakdistance',spkdur); 
+    idx = logical(arrayfun(@(x)sum(x(:,1)>slopePeaks-0.10*rate& x(:,1)<slopePeaks+0.10*rate),spikeData(:,1)*rate));
+    spikeData = spikeData(idx,:);
     
-  
 end
 
 function [p, t] = FindThePeaks(s)

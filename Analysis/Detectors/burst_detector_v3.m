@@ -1,11 +1,13 @@
-function [eventTimesUSec, eventChannels] = p_burst_detector_v2(dataset, channels,thres,maxThres,minDur,maxDur,filtFlag)
+function [eventTimesUSec, eventChannels] = burst_detector_v3(dataset, channels,dparams)
 %Usage: burst_detector_v2(dataset, blockLenSecs, channels)
 %This function will calculate bursts based on line length.
 %Input: 
 %   'dataset'   -   [IEEGDataset]: IEEG Dataset loaded within an IEEG Session
 %   'channels'  -   [Nx1 integer array] : channels of interest
+%   'dparams'   -   [struct]    :   Detection parameters
 
 % Author: Hoameng Ung, Questions,comments,bugs : hoameng@upenn.edu
+% Updated 7/7/2015
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Copyright 2013 Trustees of the University of Pennsylvania
@@ -23,6 +25,73 @@ function [eventTimesUSec, eventChannels] = p_burst_detector_v2(dataset, channels
 % limitations under the License.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+%% Initialization
+timeOfInterest = dparams.timeOfInterest;
+if isempty(timeOfInterest)
+    duration = dataset.channels(1).get_tsdetails.getDuration/1e6;
+else
+    duration =(timeOfInterest(2) - timeOfInterest(1));
+end
+startPt = 1+(timeOfInterest(1)*fs);
+numPoints = duration*fs;
+numParBlocks = 5;
+numPointsPerParBlock = numPoints / numParBlocks;
+%calculate number of blocks
+numBlocks = ceil(numPointsPerParBlock/fs/blockLenSecs);
+
+parFeats = cell(numParBlocks,1);
+%pool(numParBlocks);
+parfor i = 1:numParBlocks
+    session = IEEGSession(datasetFN,IEEGid,IEEGpwd);
+    %% Feature extraction loop
+    feat = cell(numBlocks,1);
+    reverseStr = '';
+    startParPt = startPt + (i-1)*numPointsPerParBlock;
+    for j = 1:numBlocks
+        %Get data
+        startBlockPt = startParPt+(blockLenSecs*(j-1)*fs);
+        endBlockPt = startParPt+min(blockLenSecs*j*fs,numPointsPerParBlock);
+        %get data
+        try
+            blockData = session.data.getvalues(startBlockPt:endBlockPt,channels);
+        catch
+            pause(1);
+            blockData = session.data.getvalues(startBlockPt:endBlockPt,channels);
+        end
+        percentValid = 1-sum(isnan(blockData),1)/size(blockData,1);
+        nChan = numel(channels);
+        tmpFeat = zeros(numWins,nChan);
+        if sum(isnan(tmpData)) ~= length(tmpData)
+            %detect bursts
+            [startTimesSec, endTimesSec, chan] = burstDetector(blockData, fs, channels,dparams); 
+
+            if ~isempty(startTimesSec)
+                totEvents = totEvents + size(startTimesSec,1);
+                startTimesUsec = ((i-1)*blockLenSecs + startTimesSec) * 1e6;
+                endTimesUsec = ((i-1)*blockLenSecs + endTimesSec) * 1e6;
+                toAdd = [startTimesUsec endTimesUsec];
+                eventTimesUSec = [eventTimesUSec;toAdd];
+                eventChannels = [eventChannels;chan'];
+            end
+        end
+        feat{j} = tmpFeat;
+        percentDone = 100 * j / numBlocks;
+        msg = sprintf('Percent done worker %d: %3.1f',i,percentDone); %Don't forget this semicolon
+        fprintf([reverseStr, msg]);
+        reverseStr = repmat(sprintf('\b'), 1, length(msg));
+    end
+    fprintf('\n');
+    feat = cell2mat(feat);
+    parFeats{i} = feat;
+end
+    save([datasetFN '_' params.saveLabel '.mat'],'parFeats','-v7.3');
+end
+
+
+
+
+
+
 %common params
 fs = dataset.channels(channels(1)).sampleRate;
 duration = dataset.channels(channels(1)).get_tsdetails.getDuration / 1e6;
@@ -30,39 +99,24 @@ blockLenSecs = 2*60*60;
 numBlocks = ceil(duration/blockLenSecs);
 
 %burst params
-% the amount of padding before and after threshold onset/offset to use, in
-% seconds  
-params.plotsOn = 0;
-params.filt = filtFlag;
-params.padSecs = .5;
-params.winSecs = 1;
-params.thres = thres;
-params.maxThres = maxThres;
-params.minDur = minDur;
-params.maxDur = maxDur;
+winLen = dparams.winLen;
 
 %line length anonymous function
-params.featFn = @(X, winLen) conv2(abs(diff(X,1)),repmat(1/winLen,winLen,1),'same');
+dparams.featFn = @(X, winLen) conv2(abs(diff(X,1)),repmat(1/winLen,winLen,1),'same');
 
 %for each block
 eventTimesUSec = [];
 eventChannels = [];
 totEvents = 0;
 reverseStr = '';
-for i = 1:100%numBlocks
+for i = 1:numBlocks
     curPt = 1+ (i-1)*blockLenSecs*fs;
     endPt = (i*blockLenSecs)*fs;
     tmpData = dataset.getvalues(curPt:endPt,channels);
-%     decData = zeros(ceil(length(tmpData(:,1))/(fs/400)),size(tmpData,2));
-%     for ch = 1:size(tmpData,2)
-%         decData(:,ch) = decimate(tmpData(:,ch),fs/400);%decimate to 400 hz
-%     end
-%     tmpData = decData;
-%     clear decData;
     %if not all nans
     if sum(isnan(tmpData)) ~= length(tmpData)
         %detect bursts
-        [startTimesSec, endTimesSec, chan] = burstDetector(tmpData, 400, channels,params); 
+        [startTimesSec, endTimesSec, chan] = burstDetector(tmpData, fs, channels,dparams); 
         
         if ~isempty(startTimesSec)
             totEvents = totEvents + size(startTimesSec,1);
@@ -82,11 +136,11 @@ end
 end
 
 
-function [startTimesSec, endTimesSec, chan] = burstDetector(data, fs, channels, params)
+function [startTimesSec, endTimesSec, chan] = burstDetector(data, fs, channels, dparams)
 
 orig = data;
 %filter data
-if params.filt == 1
+if dparams.FILTFLAG == 1
     for i = 1:size(data,2);
         [b, a] = butter(4,[1/(fs/2)],'high');
         d1 = filtfilt(b,a,data(:,i));
@@ -101,39 +155,18 @@ if params.filt == 1
     end
 end
 
-featWinLen = round(params.winSecs * fs);
+featWinLen = round(dparams.winLen * fs);
 
-featVals = params.featFn(data, featWinLen);
+featVals = dparams.featFn(data, featWinLen);
 
-avgFeatVal = mean(featVals);
-avgFeatVal = repmat(avgFeatVal,size(featVals,1),1);
-nfeatVals = featVals./avgFeatVal;
+medFeatVal = median(featVals);
+medFeatVal = repmat(medFeatVal,size(featVals,1),1);
+nfeatVals = featVals./medFeatVal;
 
-if params.plotsOn == 1
-  subplot(3,1,1);plot(data(2800000:end,1));
-  subplot(3,1,2);plot(orig(2800000:end,1));
-  subplot(3,1,3);plot(nfeatVals(2800000:end,1));
-  hold on;
-  hline(params.thres,'r')
-  hold off;
-  linkaxes(get(gcf,'children'),'x')
-end
-
- 
   % get the time points where the feature is above the threshold (and it's not
   % NaN)
-  aboveThresh = ~isnan(nfeatVals) & nfeatVals > params.thres & nfeatVals<params.maxThres;
+  aboveThresh = ~isnan(nfeatVals) & nfeatVals > dparams.thres & nfeatVals<dparams.maxThres;
   
-%   % create the pad filter
-%   numPad = round(params.padSecs*fs);
-% 
-%   %pad numPad on each side
-%   padFilt = ones(numPad*2+1,1);
-%   
-%   % pad/smear threshold crossings
-%   %aboveThreshPad = conv(double(aboveThresh), padFilt, 'same') > 0;
-%   aboveThreshPad = conv2(double(aboveThresh), padFilt, 'same') > 0;
-% 
 aboveThreshPad = aboveThresh;
   %get event start and end window indices - modified for per channel
   %processing
@@ -150,24 +183,12 @@ aboveThreshPad = aboveThresh;
   %map chan idx back to channels
   chan = channels(chan);
   
-%   %remove spikes by thresholding max line length
-%   idx = [];
-%   for i = 1:size(evStartIdxs,1)
-%       maxFeat = max(max(featVals(evStartIdxs(i):evEndIdxs(i),:)));
-%       if maxFeat>maxfeatThresh
-%           idx = [idx i];
-%       end
-%   end
-%   startTimesSec(idx) = [];
-%   endTimesSec(idx) = [];
-%   chan(idx) = [];
-  
   duration = endTimesSec - startTimesSec;
-  idx = (duration<(params.minDur) | (duration>params.maxDur));
+  idx = (duration<(dparams.minDur) | (duration>dparams.maxDur));
   startTimesSec(idx) = [];
   endTimesSec(idx) = [];
   chan(idx) = [];
   
-  
+  chan = num2cell(chan);
 end
 

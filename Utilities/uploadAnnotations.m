@@ -11,7 +11,7 @@ function uploadAnnotations(dataset,layerName,eventTimesUSec,eventChannels,label)
 %	algorithms (e.g. spike_AR.m). Annotations will be associated with eventChannels and given a label.
 %
 %   v2 3/15/2015 - Hoameng Ung - added variable channel support
-%   
+%   v3 7/15/2015 - added variable event support
 
 
 try 
@@ -29,7 +29,11 @@ uniqueChannels = unique(strEventChannels);
 uniqueChannels = cellfun(@str2num,uniqueChannels,'UniformOutput',0);
 for i = 1:numel(uniqueChannels)
     idx = cellfun(@(x)isequal(x,uniqueChannels{i}),eventChannels);
-    ann = [ann IEEGAnnotation.createAnnotations(eventTimesUSec(idx,1),eventTimesUSec(idx,2),'Event',label,dataset.channels(uniqueChannels{i}))];
+    if size(eventTimesUSec,2)>1
+        ann = [ann IEEGAnnotation.createAnnotations(eventTimesUSec(idx,1),eventTimesUSec(idx,2),'Event',label,dataset.channels(uniqueChannels{i}))];
+    else
+        ann = [ann IEEGAnnotation.createAnnotations(eventTimesUSec(idx,1),eventTimesUSec(idx,1),'Event',label,dataset.channels(uniqueChannels{i}))];
+    end
 end
 fprintf('done!\n');
 numAnnot = numel(ann);
