@@ -1,4 +1,4 @@
-function [wave, info] = p_loadAnnotationWaveforms_par(params,fn,layerName)
+function [eeg, info] = loadDataWithinAnnotation_par(params,fn,layerName)
 %Function will load all waveforms in (or in
 %filename fn.mat) and save into fn.mat.
 %wave and info are cell arrays

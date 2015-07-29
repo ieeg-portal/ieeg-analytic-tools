@@ -1,6 +1,7 @@
 function removeAnnots(datasets,exp)
 %function will remove all annotation layers matching regexp exp from IEEGDatasets. 
-%CAUTION: PERMANENTLY REMOVE 
+%CAUTION: WILL PERMANENTLY REMOVE 
+%v2 7/28/2015 - Updated to support ieeg-matlab-1.13
 
 
 for i = 1:numel(datasets)

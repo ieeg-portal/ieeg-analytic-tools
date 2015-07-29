@@ -1,5 +1,5 @@
 %Use this program to plot EEG data
-function hu_DispEEGMat(data,rate,scale)
+function p_PlotEEGMat(data,rate,scale)
 %define the parameters
 
     x = 1:size(data, 1);
