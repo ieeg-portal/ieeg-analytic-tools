@@ -15,7 +15,7 @@ function [allEvents, timesUSec, channels] = getAllAnnots(dataset,layerName)
 % v2 8/26/2014 - updated to return times and channels
 % v3 8/28/2014 - changed input to annLayer Str
 % v4 4/14/2015 - updated error handling
-% v5 7/28/2015 - Updated to support ieeg-matlab-1.13
+% v5 7/28/2015 - Updated to support ieeg-matlab-1.13.2
 
 
 allEvents = [];

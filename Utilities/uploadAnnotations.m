@@ -12,7 +12,7 @@ function uploadAnnotations(dataset,layerName,eventTimesUSec,eventChannels,label)
 %
 %   v2 3/15/2015 - Hoameng Ung - added variable channel support
 %   v3 7/15/2015 - added variable event support
-%   v4 7/28/2015 - Updated to support ieeg-matlab-1.13
+%   v4 7/28/2015 - Updated to support ieeg-matlab-1.13.2
 
 
 try 
