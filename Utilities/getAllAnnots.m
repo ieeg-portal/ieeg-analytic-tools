@@ -1,11 +1,10 @@
 function [allEvents, timesUSec, channels] = getAllAnnots(dataset,layerName)
-% function will return a cell array of all IEEGAnnotation objects in
+% Function will return a cell array of all IEEGAnnotation objects in
 % annotation layer annLayer
-
+% [allEvents, timesUSec, channels] = getAllAnnots(dataset,layerName)
 % Input
 %   'dataset'   :   IEEGDataset object
 %   'layerName'  :   'string' of annotation layer name
-
 % Output
 %   'allEvents' :   All annotations
 %   'timesUSec' :   Nx2 [start stop] times in USec

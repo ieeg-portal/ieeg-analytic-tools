@@ -1,6 +1,8 @@
 function data = getAllData(dataset,channels)
-%Usage: data = getAllData(IEEGDataset,channels)
-%Gets all data in IEEGDataset dataset for specified channels.
+%   Usage: data = getAllData(dataset,channels)
+%   dataset    -    IEEGDataset
+%   channels   -    array of channel indices
+%   Gets all data in IEEGDataset dataset for specified channels.
 %NOTE: If large dataset, use getExtendedData, which gets data one channel
 %at a time
 
