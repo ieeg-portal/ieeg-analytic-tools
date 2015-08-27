@@ -1,5 +1,5 @@
 function [eventTimesUSec, eventChannels] = burst_detector_v3(dataset, channels,dparams)
-%Usage: burst_detector_v2(dataset, blockLenSecs, channels)
+%Usage: burst_detector_v3(dataset, blockLenSecs, channels)
 %This function will calculate bursts based on line length.
 %Input: 
 %   'dataset'   -   [IEEGDataset]: IEEG Dataset loaded within an IEEG Session
