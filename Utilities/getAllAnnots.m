@@ -20,7 +20,7 @@ allEvents = [];
 timesUSec = [];
 channels = [];
 startTime = 1;
-allChan = [dataset.channels];
+allChan = [dataset.rawChannels];
 allChanLabels = {allChan.label};
 annLayer = dataset.annLayer(strcmp(layerName,{dataset.annLayer.name}));
 if ~isempty(annLayer)
