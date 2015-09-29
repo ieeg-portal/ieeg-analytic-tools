@@ -30,9 +30,9 @@ uniqueChannels = cellfun(@str2num,uniqueChannels,'UniformOutput',0);
 for i = 1:numel(uniqueChannels)
     idx = cellfun(@(x)isequal(x,uniqueChannels{i}),eventChannels);
     if size(eventTimesUSec,2)>1
-        ann = [ann IEEGAnnotation.createAnnotations(eventTimesUSec(idx,1),eventTimesUSec(idx,2),'Event',label,dataset.channels(uniqueChannels{i}))];
+        ann = [ann IEEGAnnotation.createAnnotations(eventTimesUSec(idx,1),eventTimesUSec(idx,2),'Event',label,dataset.rawChannels(uniqueChannels{i}))];
     else
-        ann = [ann IEEGAnnotation.createAnnotations(eventTimesUSec(idx,1),eventTimesUSec(idx,1),'Event',label,dataset.channels(uniqueChannels{i}))];
+        ann = [ann IEEGAnnotation.createAnnotations(eventTimesUSec(idx,1),eventTimesUSec(idx,1),'Event',label,dataset.rawChannels(uniqueChannels{i}))];
     end
 end
 fprintf('done!\n');
