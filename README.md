@@ -12,6 +12,7 @@ Utilities
 ---------
 These scripts help get/manipulate data and annotations
 
+<<<<<<< HEAD
 *getAnnotations.m*	- get all annotations from a given dataset and annotation layer
 
 *removeAnnotationss.m*	- remove specified annotations from IEEGDataset(s)
@@ -24,3 +25,23 @@ Analysis - TO BE ADDED
 -----------
 All scripts were tailored for specific datasets and I am attempting to make them more general and provide sufficient documentation. I would be surprised if any scripts worked smoothly without a need for tweaking. Use at your own risk and frustration.
 
+=======
+*getAllAnnots.m*	- get all annotations from a given dataset and annotation layer
+
+*removeAnnots.m*	- remove specified annotations from IEEGDataset(s)
+
+*uploadAnnotations.m*	- upload annotations to a given layer - can be used in
+conjunction with detection algorithms
+
+*viewannots.m*		- matlab GUI to view and vet annotations	
+
+Analysis - TO BE ADDED 
+-----------
+These scripts were tailored for specific datasets and I am attempting to make them more general and provide sufficient documentation. I would be surprised if any scripts worked smoothly without a need for tweaking. Use at your own risk and frustration.
+
+*spike_keating_v3*
+
+*spike_AR*
+
+*spike_LL*
+>>>>>>> 45667d6cb1273defd11272f8308fddcc159728fe
