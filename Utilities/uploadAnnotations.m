@@ -40,13 +40,13 @@ end
 function createAndAdd(dataset,layerName,eventTimesUSec,eventChannels,label)
 annLayer = dataset.addAnnLayer(layerName);
 ann = [];
-fprintf('[%s] Creating annotations for %s...',datestr(clock),dataset.snapName);
+fprintf('[%s] Creating annotations for %s...\n',datestr(clock),dataset.snapName);
 %create cell array of unique channels in eventChannels
 strEventChannels = cellfun(@num2str,eventChannels,'UniformOutput',0);
 uniqueChannels = unique(strEventChannels);
 uniqueChannels = cellfun(@str2num,uniqueChannels,'UniformOutput',0);
 for i = 1:numel(uniqueChannels)
-    fprintf('Creating annotations for channel %d',uniqueChannels{i});
+    fprintf('Creating annotations for channel %d\n',uniqueChannels{i});
     idx = cellfun(@(x)isequal(x,uniqueChannels{i}),eventChannels);
     if size(eventTimesUSec,2)>1
         ann = [ann IEEGAnnotation.createAnnotations(eventTimesUSec(idx,1),eventTimesUSec(idx,2),'Event',label,dataset.rawChannels(uniqueChannels{i}))];

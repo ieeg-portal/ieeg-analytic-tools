@@ -6,8 +6,8 @@ ZCFn = @(x) sum((x(1:end-1,:)>repmat(mean(x),size(x,1)-1,1)) & x(2:end,:)<repmat
 LLFn = @(x) mean(abs(diff(y)));
 [PSD,F]  = pwelch(y,ones(length(y),1),0,length(y),fs,'psd');
 avepow = bandpower(PSD,F,'psd');
-aRatio= bandpower(PSD, F,[10 12],'psd')/avepow;
-aRatio2= bandpower(PSD, F,[8 10],'psd')/avepow;
+aRatio= bandpower(PSD, F,[8 10],'psd')/avepow;
+aRatio2= bandpower(PSD, F,[10 12],'psd')/avepow;
 aRatio3= aRatio/bandpower(PSD, F,[18 22],'psd')/avepow;
 aRatio4= aRatio2/bandpower(PSD, F,[28 32],'psd')/avepow;
 
