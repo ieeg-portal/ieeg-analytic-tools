@@ -1,0 +1,58 @@
+#! /bin/sh
+
+# Based on the Liquibase launch script http://www.liquibase.org/
+
+## resolve links - $0 may be a symlink
+PRG="$0"
+while [ -h "$PRG" ] ; do
+  ls=`ls -ld "$PRG"`
+  link=`expr "$ls" : '.*-> \(.*\)$'`
+  if expr "$link" : '/.*' > /dev/null; then
+  PRG="$link"
+  else
+  PRG=`dirname "$PRG"`"/$link"
+  fi
+done
+
+IEEG_HOME=`dirname "$PRG"`
+
+# make it fully qualified
+IEEG_HOME=`cd "$IEEG_HOME" && pwd`
+#echo "IEEG Home: $IEEG_HOME"
+ 
+# build classpath from all jars in lib
+if [ -f /usr/bin/cygpath ]; then
+  CP=.
+  CP="$CP;$IEEG_HOME"/config
+  for i in "$IEEG_HOME"/*.jar; do
+    i=`cygpath --windows "$i"`
+    CP="$CP;$i"
+  done
+  for i in "$IEEG_HOME"/*.jar; do
+    i=`cygpath --windows "$i"`
+    CP="$CP;$i"
+  done
+  for i in "$IEEG_HOME"/lib/*.jar; do
+    i=`cygpath --windows "$i"`
+    CP="$CP;$i"
+  done
+else
+  CP=.
+  CP="$CP":"$IEEG_HOME"/config
+  for i in "$IEEG_HOME"/*.jar; do
+    CP="$CP":"$i"
+  done
+  for i in "$IEEG_HOME"/*.jar; do
+    CP="$CP":"$i"
+  done
+  for i in "$IEEG_HOME"/lib/*.jar; do
+    CP="$CP":"$i"
+  done
+fi
+
+
+
+# add any JVM options here
+JAVA_OPTS=
+
+java -cp "$CP" $JAVA_OPTS org.ieeg.cli.mef2edf.Mef2EdfMain ${1+"$@"} 

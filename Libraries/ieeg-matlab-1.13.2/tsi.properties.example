@@ -1,0 +1,5 @@
+#mongodb.hostname=localhost
+#mongodb.port=27017
+#mongodb.username=
+#mongodb.password=
+

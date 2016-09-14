@@ -1,0 +1,191 @@
+IEEG Portal
+Copyright 2010-2013 Trustees of the University of Pennsylvania
+
+This product is licensed under the Apache License, Version 2.0, a copy of which
+may be found at the link at the end of this file.
+
+-------------------------------------------------------------------------------
+
+Includes Hibernate utility classes: HibernateDAOFactory.java,
+GenericHibernateDAO.java, IDAO.java, DrupalHibernateUtil.java,
+and HibernateUtil.java with this copyright notice:
+
+Copyright (c) 2005, Christian Bauer <christian@hibernate.org>
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+ - Redistributions of source code must retain the above copyright notice, this
+ list of conditions and the following disclaimer.
+
+ - Redistributions in binary form must reproduce the above copyright notice,
+ this list of conditions and the following disclaimer in the documentation
+ and/or other materials provided with the distribution.
+
+ - Neither the name of the original author nor the names of contributors may be
+ used to endorse or promote products derived from this software without
+ specific prior written permission.
+
+ THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS"
+ AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE
+ IMPLIED WARRANTIES of MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE
+ ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT OWNER OR CONTRIBUTORS BE
+ LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+ CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT of
+ SUBSTITUTE GOODS OR SERVICES; LOSS of USE, DATA, OR PROFITS; OR BUSINESS
+ INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY of LIABILITY, WHETHER IN
+ CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
+ ARISING IN ANY WAY OUT of THE USE of THIS SOFTWARE, EVEN IF ADVISED of
+ THE POSSIBILITY of SUCH DAMAGE.
+
+-------------------------------------------------------------------------------
+
+The ieeg-dygraphs submodule is a fork of the project here 
+http://code.google.com/p/dygraphs-gwt/ and it is MIT licensed:
+ 
+Copyright (c) 2010 Steven Jardine, MJN Services, Inc.
+  
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+  
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+  
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE. 
+ 
+-------------------------------------------------------------------------------
+
+The ToolUploadServlet.java file has this copyright notice:
+
+Copyright 2010 Manuel Carrasco Moñino. (manolo at apache/org) 
+http://code.google.com/p/gwtupload
+
+and is licensed under the Apache License, Version 2.0, a copy of which may
+be found at the link at the end of this file.
+
+-------------------------------------------------------------------------------
+
+The MefHeader2.java, MefWriter.java, RED.java, and RED2.java files have this
+copyright notice:
+
+Copyright 2013, Mayo Foundation, Rochester MN. All rights reserved
+Written by Ben Brinkmann, Matt Stead, Dan Crepeau, and Vince Vasoli
+
+and are licensed under the Apache License, Version 2.0, a copy of which may
+be found at the link at the end of this file.
+
+-------------------------------------------------------------------------------
+
+For the file Md5Hash.java:
+
+The original javascript is from http://www.webtoolkit.info/javascript-md5.html.
+It is licensed under Creative Commons Attribution 2.0 UK: England & Wales
+(CC BY 2.0 UK) the text of which can be found at this link:
+
+http://creativecommons.org/licenses/by/2.0/uk/legalcode
+ 
+The resulting JSNI code for GWT is the work of abickford from
+https://groups.google.com/forum/?fromgroups#!topic/Google-Web-Toolkit/rQlHWplEyfg
+ 
+ ------------------------------------------------------------------------------
+ 
+The file ClickImageResourceCell.java has this copyright notice:
+
+Copyright 2010 Google Inc.
+
+and is licensed under the Apache License, Version 2.0, a copy of which may
+be found at the link at the end of this file.
+
+-------------------------------------------------------------------------------
+
+The file RichTextToolbar.java has this copyright notice:
+
+Copyright 2007 Google Inc.
+
+and is licensed under the Apache License, Version 2.0, a copy of which may
+be found at the link at the end of this file.
+
+-------------------------------------------------------------------------------
+
+The file UUID.java has this copyright notice and license:
+
+Copyright (c) 2008, Robert Kieffer
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are
+met:
+
+    * Redistributions of source code must retain the above copyright
+      notice, this list of conditions and the following disclaimer.
+
+    * Redistributions in binary form must reproduce the above
+      copyright notice, this list of conditions and the following
+      disclaimer in the documentation and/or other materials provided
+      with the distribution.
+
+    * Neither the name of Robert Kieffer nor the names of its
+      contributors may be used to endorse or promote products derived
+      from this software without specific prior written permission.
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+"AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+(INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+-------------------------------------------------------------------------------
+
+The EDF-read/write files in the ieeg-cli submodule is a fork of the 
+project here: https://github.com/MIOB/EDF4J and are MIT licensed: 
+
+(The MIT license)
+
+Copyright (c) 2012 MIPT (mr.santak@gmail.com)
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software 
+and associated documentation files (the "Software"), to deal in the Software without restriction, 
+including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, 
+and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, 
+subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies 
+or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, 
+INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE 
+AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, 
+DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, 
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-------------------------------------------------------------------------------
+
+http://www.apache.org/licenses/LICENSE-2.0
+
+-------------------------------------------------------------------------------
+The image slideshow used code from the following project on Github:
+https://github.com/leemark/better-simple-slideshow and has a Mozilla license v2.0:
+https://www.mozilla.org/MPL/2.0/
+
+
+ 
+
+
+ 

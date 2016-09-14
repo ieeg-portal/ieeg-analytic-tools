@@ -1,0 +1,92 @@
+\documentclass{article}
+\usepackage{times}
+\begin{document}
+\title{Directly reading the MEF format}
+\author{Eric Kim}
+\date{\today}
+\maketitle
+\begin{abstract}
+The mex file decomp\_mef.c uses the start and end indices specified by the user to scan through MEF data and decompress the desired data samples. This document focuses on the process of compiling and implementing decomp\_mef.c.
+\end{abstract}
+\section{mex basics}
+\begin{itemize}
+\item
+To compile a mex file in MATLAB, use the mex command:\\
+\\
+\texttt{mex filename.c}
+\item
+To choose the C compiler for compilation:\\
+\\
+\texttt{mex -setup}
+\end{itemize}
+\section{Linked files}
+decomp\_mef.c should be compiled with the following files: RED\_decode.c endian\_functions.c mef\_lib.c AES\_encryption.c crc\_32.c and RED\_encode.c. To do so in MATLAB, simply include the linked files after decomp\_mef.c when making the mex file:\\
+\\
+\texttt{mex decomp\_mef.c RED\_decode.c endian\_functions.c mef\_lib.c\\ AES\_encryption.c crc\_32.c RED\_encode.c}
+\section{Operating system compatibility}
+ decomp\_mef.c was oringinally written for UNIX-based operating systems and should compile  cleanly on most unix platforms with small differences in detail. Compiling on windows is more challenging, though doable.
+\subsection{Ubuntu}
+\begin{description}
+\item[Comments] \hfill \\
+There is a good chance the C compilers installed on ubuntu will only support C89 and C90. This presents a compatibility issue because inline comments with // syntax were introduced in C99. If compiling results in:\\
+\\
+\texttt{error: expected identifier or ‘(’ before ‘/’ token\\}
+\\
+this indicates that a double-slash comment has been used. All inline comments with // should be replaced with /*  */ style comments.\\
+\item[GCC version] \hfill \\
+Many of the later versions of gcc do not support mex files:\\
+\\
+\texttt{Warning: You are using gcc version "4.4.3-4ubuntu5)". The earliest gcc version supported
+with mex is "4.1". The latest version tested for use with mex is "4.2".
+To download a different version of gcc, visit http://gcc.gnu.org}\\
+\\
+To eliminate this warning, first install the correct version of gcc:\\
+\\
+\texttt{sudo apt-get install gcc-4.1-multilib}\\
+\\
+Next, change the gcc symbolic link to make sure it refers to the correct version of gcc:\\
+\\
+\texttt{sudo mv /usr/bin/gcc /usr/bin/gcc\_mybackup}\\
+\texttt{sudo ln -s /usr/bin/gcc-4.1 /usr/bin/gcc}\\
+\\
+If you want to compile something else using the later version of gcc, you can restore the symbolic link with:\\
+\\
+\texttt{sudo mv /usr/bin/gcc\_mybackup /usr/bin/gcc}\\
+\item[Object Files] \hfill \\
+Compiling decomp\_mef.c works best on ubuntu if the linked files are made into object files first. This can be done in the terminal with:\\
+\\
+\texttt{cc -c filename.c\\}
+\\
+After the object files have been created, make the mex file in MATLAB using the object files instead:\\
+\\
+\texttt{mex decomp\_mef.c RED\_decode.o endian\_functions.o mef\_lib.o\\ AES\_encryption.o crc\_32.o RED\_encode.o}\\
+\end{description}
+\subsection{Mac}
+Compiling on a mac should not present errors:\\
+\\
+\texttt{mex decomp\_mef.c RED\_decode.c endian\_functions.c mef\_lib.c \\AES\_encryption.c crc\_32.c RED\_encode.c}\\
+\\
+should create the appropriate mex file. 
+\subsection{Windows}
+\begin{description}
+  \item[Header Files] \hfill \\
+  Because decomp\_mef.c was originally written for unix-based operating systems, it includes two header files (pthread.h and sched.h) that are a part of the standard C library on unix-based platforms, but are not present on windows. Thus, we must manually download windows compatible versions of the missing header files from the GNU C library.  These can quickly be found by googling "GNU C library \emph{header file}."
+  \item[fseeko] \hfill \\
+  fseeko is only available on unix but appears several times in decomp\_mef.c. Replace every instance of fseeko with fseek. Also, fseeko takes in an argument of type (off\_t); this is not recognized by windows. Thus, replace every instance of (off\_t) with (long). Both off\_t and long datatypes are 64 bit datatypes, which reduces the potential loss of data. Fseeko and fseek are similar enough that the decompression should still run smoothly.
+  \item[Unneccessary Functions] \hfill \\
+  A few functions in the linked files will cause problems when attempting to compile decomp\_mef.c on windows. However, these functions are used only when compressing data in the MEF format and are not necessary to run decomp\_mef.c. To eliminate these errors, we don't include RED\_encode.c (which is only completely necessary during compression), and comment out the following functions in mef\_lib.c: build\_mef\_header\_block, generate\_unique\_ID, set\_hdr\_unique\_ID, set\_block\_hdr\_unique\_ID, set\_session\_unique\_ID and write\_mef. NOTE: Compiling on unix based operating systems can be done in this way as well, though it is  unnecessary because these functions do not cause errors on unix.
+   \item[fopen/fread] \hfill \\
+Unix systems treat text files and binary files the same. However, windows treats these differently and often fails to correctly read text files. In order to eliminate this problem, open the MEF data as a binary file with the "rb" mode instead of the "r" mode.
+\item[Final Compilation] \hfill \\
+With the above erorrs eliminated, the mex file can be compiled without creating object files:\\
+\\
+\texttt{mex decomp\_mef.c RED\_decode.c endian\_functions.c mef\_lib.c AES\_encryption.c crc\_32.c}\\
+\\
+\end{description}
+\section{Endianess}
+Currently, decomp\_mef.c will only run on little-endian machines. In practice, this should not present a significant problem given the limited number of machines using big-endian datatypes. To run decomp\_mef.c on big-endian machines would require extensive changes in the coding. 
+
+
+\end{document}
+
+

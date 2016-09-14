@@ -1,0 +1,17 @@
+institution
+Firstname
+Middlename
+Lastname
+000-000-000
+channel
+1205691842000000
+32556
+low_frequency_filter_setting
+high_frequency_filter_setting
+0
+1.0
+Digital Lynx
+channel_comments
+study_comments
+1728053248
+1.0

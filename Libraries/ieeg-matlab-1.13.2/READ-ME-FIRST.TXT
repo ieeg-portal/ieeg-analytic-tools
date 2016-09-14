@@ -1,0 +1,13 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%
+% MATLAB library package for IEEG Services, www.ieeg.org
+%
+% Copyright (C) 2011-13 by the Trustees of the University of Pennsylvania.
+% All Rights Reserved.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
+Version: 1.13.2, ${maven.build.timestamp}
+
+See https://main.ieeg.org/sites/default/files/IEEGDocumentation.pdf for instructions.
