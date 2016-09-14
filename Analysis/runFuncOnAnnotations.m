@@ -21,6 +21,8 @@ for i = 1:size(timesUSec,1)
     %endPt = round((timesUSec(i,1)/1e6+afterStartTime)*fs);
     endPt = round((timesUSec(i,2)/1e6+afterEndTime)*fs);
     tmpDat = dataset.getvalues(startPt:endPt,eventChannels{i});
+    %trim leading and trailing nans
+    tmpDat = tmpDat(~all(isnan(tmpDat),2),~all(isnan(tmpDat),1));
     raw{i}.eeg = tmpDat;
     raw{i}.times = [startPt/fs endPt/fs];
     if runOnWin
