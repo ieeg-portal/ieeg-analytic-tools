@@ -6,13 +6,13 @@ IEEGpwd = params.IEEGpwd;
 ch_keep = cell(numel(datasetNames),1);
 ch_remove = cell(numel(datasetNames),1);
 stat = cell(numel(datasetNames),1);
-mult = 4;
+mult = 3; %3 tends to be a good multiplier
 warning('off','all')
 
 parfor i = 1:numel(datasetNames)
     fprintf('Checking %s\n',datasetNames{i});
     try
-        lvar = load(sprintf('%s_rAC.mat',datasetNames{i}));
+        lvar = load(sprintf('%s_rAC2.mat',datasetNames{i}));
         fprintf('Found Mat for %s\n',datasetNames{i});
         subj_ch_remove = lvar.subj_ch_remove;
         subj_ch_keep = lvar.subj_ch_keep;
@@ -35,7 +35,7 @@ parfor i = 1:numel(datasetNames)
         allCh = 1:numChannels;
         subj_ch_remove = find(meanSlope>(mean(meanSlope) + mult*std(meanSlope)));
         subj_ch_keep =  allCh(~ismember(allCh,subj_ch_remove));
-        %parsave(sprintf('%s_rAC.mat',datasetNames{i}),subj_ch_remove,subj_ch_keep,meanSlope);
+        parsave(sprintf('%s_rAC2.mat',datasetNames{i}),subj_ch_remove,subj_ch_keep,meanSlope);
     end
     ch_remove{i} = subj_ch_remove;
     stat{i} = meanSlope;
