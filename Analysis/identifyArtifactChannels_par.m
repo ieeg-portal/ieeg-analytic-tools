@@ -1,4 +1,4 @@
-function [ch_keep, ch_remove, stat] = identifyArtifactChannels_par(datasetNames,params)
+function [ch_keep, ch_remove, stat] = identifyArtifactChannels_par(datasetNames,params,mult)
 %datasetNames = params.datasetID;
 
 IEEGid = params.IEEGid;
@@ -6,7 +6,7 @@ IEEGpwd = params.IEEGpwd;
 ch_keep = cell(numel(datasetNames),1);
 ch_remove = cell(numel(datasetNames),1);
 stat = cell(numel(datasetNames),1);
-mult = 3; %3 tends to be a good multiplier
+%mult = 3; %3 tends to be a good multiplier
 warning('off','all')
 
 parfor i = 1:numel(datasetNames)
