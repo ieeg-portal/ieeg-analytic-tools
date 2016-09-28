@@ -27,7 +27,7 @@ function [eventTimesUSec, eventChannels] = burst_detector_v3(dataset, channels,p
 
 %% Initialization
 fs =dataset.sampleRate;
-blockLenSecs = params.burst.blockLenSecs;
+blockLenSecs = params.blockLenSecs;
 timeOfInterest = params.timeOfInterest;
 datasetFN = dataset.snapName;
 if isempty(timeOfInterest)

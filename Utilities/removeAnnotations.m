@@ -3,6 +3,8 @@ function removeAnnotations(datasets,exp,varargin)
 %CAUTION: WILL PERMANENTLY REMOVE 
 %varargin: 'channels': vector to specific which channels to remove
 %annotations from
+% Hoameng Ung
+% 5/24/2015
 
 chanSpec = [];
 for i = 1:2:numel(varargin)
