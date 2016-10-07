@@ -1,4 +1,4 @@
-function calcFeature_v19_par(dataset,channels,params,allFeatures,varargin)
+function calcFeature_v19_par_nonan(dataset,channels,params,allFeatures,varargin)
 %Usage: calcFeature_v19_par(dataset,params,allFeatures)
 %This function will divide IEEGDataset channels into blocks of
 %and within these blocks further divide into winLen. Features
@@ -46,8 +46,8 @@ function calcFeature_v19_par(dataset,channels,params,allFeatures,varargin)
 % 3/24/2015    v15 - added hwamp
 % 6/13/2016 -  v16 - added RMS
 % 7/28/2016 -   v17 -   added save for each block
-numParBlocks = 1; %% NUMBER OF PARALLEL BLOCKS
-numParProcs = 1; % NUMBER OF WORKERS
+numParBlocks = 200; %% NUMBER OF PARALLEL BLOCKS
+numParProcs = 10; % NUMBER OF WORKERS
 blockLenSecs = params.blockLen; %get data in blocks
 for i = 1:numel(allFeatures)
     allFeatures{i} = lower(allFeatures{i});
@@ -121,7 +121,7 @@ if (~isempty(features))
 
       %% RUNNN
 
-    for i = 1:numParBlocks
+    parfor i = 1:numParBlocks
         parsavename = sprintf('%s_wL%d_parblock2-%0.2d.mat',datasetFN,params.winLen,i);
         if exist(parsavename,'file') ~= 2
             %javaaddpath('../../Libraries/ieeg-matlab-1.13.2/IEEGToolbox/lib/ieeg-matlab.jar');
@@ -140,6 +140,8 @@ if (~isempty(features))
                     tmpFeat{f} = nan(numWins,numBlocks,1); %DCN is global      
                 elseif strcmp(features{f},'hw')
                     tmpFeat{f} = nan(numWins,numBlocks,nChan,2);    %hw amp and dur       
+                elseif strcmp(features{f},'custom')
+                    tmpFeat{f} = nan(numWins,numBlocks,560);
                 else
                     tmpFeat{f} = nan(numWins,numBlocks,nChan);
                 end
@@ -215,7 +217,7 @@ if (~isempty(features))
                                 if startWinPt<endWinPt
                                     tmpData = blockData(startWinPt:endWinPt,:);
                                     numNaN = sum(sum(isnan(tmpData))); % find total NaN;
-                                    if numNaN/numel(tmpData)<=0.5 % if less than 50 percent NaN
+                                    if numNaN/numel(tmpData)<=.10 % if less than 10 percent NaN
                                         for f = 1:numel(features)
                                             switch features{f}
                                                 case 'power'
