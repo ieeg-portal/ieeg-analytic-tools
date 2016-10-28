@@ -47,7 +47,7 @@ function calcFeature_v19_par_nonan(dataset,channels,params,allFeatures,varargin)
 % 6/13/2016 -  v16 - added RMS
 % 7/28/2016 -   v17 -   added save for each block
 numParBlocks = 200; %% NUMBER OF PARALLEL BLOCKS
-numParProcs = 10; % NUMBER OF WORKERS
+numParProcs = 16; % NUMBER OF WORKERS
 blockLenSecs = params.blockLen; %get data in blocks
 for i = 1:numel(allFeatures)
     allFeatures{i} = lower(allFeatures{i});
@@ -119,8 +119,7 @@ if (~isempty(features))
     %     javaaddpath('../../Libraries/ieeg-matlab-1.13.2/IEEGToolbox/lib/ieeg-matlab.jar');
     % end
 
-      %% RUNNN
-
+    %% RUNNN
     parfor i = 1:numParBlocks
         parsavename = sprintf('%s_wL%d_parblock2-%0.2d.mat',datasetFN,params.winLen,i);
         if exist(parsavename,'file') ~= 2
@@ -141,7 +140,7 @@ if (~isempty(features))
                 elseif strcmp(features{f},'hw')
                     tmpFeat{f} = nan(numWins,numBlocks,nChan,2);    %hw amp and dur       
                 elseif strcmp(features{f},'custom')
-                    tmpFeat{f} = nan(numWins,numBlocks,560);
+                    tmpFeat{f} = nan(numWins,numBlocks,896);
                 else
                     tmpFeat{f} = nan(numWins,numBlocks,nChan);
                 end

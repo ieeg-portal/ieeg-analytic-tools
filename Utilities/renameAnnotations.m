@@ -1,5 +1,11 @@
 function renameAnnotations(datasets,oldLayer,newLayer)
 
+%%
+% Usage: renameAnnotations(datasets,oldLayer,newLayer)
+% 
+%
+%
+%
 for i = 1:numel(datasets)
    fprintf('Renaming layers from %s \n',datasets(i).snapName);
     layers = [datasets(i).annLayer];

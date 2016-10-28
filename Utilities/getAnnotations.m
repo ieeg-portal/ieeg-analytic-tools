@@ -45,3 +45,4 @@ else
     disp('No Annotation Layer exists. Current annotations are')
     {dataset.annLayer.name}
 end
+channels = channels'; %make into Nx1 column of cells
