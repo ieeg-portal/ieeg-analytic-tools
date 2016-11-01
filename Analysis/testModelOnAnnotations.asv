@@ -1,4 +1,4 @@
-function [out, raw] = runFuncOnAnnotations(dataset,layerName,fun,varargin)
+function [yhat, yhat_score] = testModelOnAnnotations(dataset,layerName,model,fun,varargin)
 % Usage: out = runFuncOnAnnotations(layerName,fun)
 % Function will run provided function "fun" on annotations in layer
 % layerName in IEEGdataset dataset and return output in cell array out,
@@ -25,7 +25,7 @@ params = [];
 useAllCh = 0;
 timesUSec = [];
 eventChannels = [];
-for i = 1:2:nargin-3
+for i = 1:2:nargin-4
     switch varargin{i}
         case 'runOnWin'
             runOnWin = varargin{i+1};
@@ -53,6 +53,8 @@ out = cell(size(timesUSec,1),1);
 raw = cell(size(timesUSec,1),1);
 totalCh = numel(dataset.rawChannels);
 fs = dataset.sampleRate;
+yhat = zeros(size(timesUSec,1),1);
+yhat_score = zeros(size(timesUSec,1),2);
 for i = 1:size(timesUSec,1)
     startPt = round((timesUSec(i,1)/1e6-beforeStartTime)*fs);
     %endPt = round((timesUSec(i,1)/1e6+afterStartTime)*fs);
@@ -64,8 +66,8 @@ for i = 1:size(timesUSec,1)
     end
     %trim leading and trailing nans
     tmpDat = tmpDat(~all(isnan(tmpDat),2),~all(isnan(tmpDat),1));
-    raw{i}.eeg = tmpDat;
-    raw{i}.times = [startPt/fs endPt/fs];
+    %raw{i}.eeg = tmpDat;
+    %raw{i}.times = [startPt/fs endPt/fs];
     if runOnWin
         if ~isempty(params)
             out{i} = runFuncOnWin(tmpDat,fs,fun,params);
@@ -76,11 +78,14 @@ for i = 1:size(timesUSec,1)
         %[r, c] = find(isnan(tmpDat));
         %tmpDat(unique(r),:) = [];
         if ~isempty(params)
-            out{i} = fun(tmpDat,fs,params);
+            feat = fun(tmpDat,fs,params);
         else
-            out{i} = fun(tmpDat,fs);
+            feat = fun(tmpDat,fs);
         end
     end
+    [tmp_yhat, tmp_score] = predict(model,feat);
+    yhat(i) = str2num(tmp_yhat{1});
+    yhat_score(i,:) = tmp_score;
     continue
 end
 

@@ -5,7 +5,6 @@ function removeAnnotations(datasets,exp,varargin)
 %annotations from
 % Hoameng Ung
 % 5/24/2015
-% Updated 11/1/2016
 
 %Input:
 %   datasets    :   IEEGDatasets
@@ -13,7 +12,7 @@ function removeAnnotations(datasets,exp,varargin)
 %
 %   OPTIONAL FLAGS
 %   channels    :   remove annotations with only [not currently implemented
-%   confirm     :   0/1 : flag to confirm removal
+%   confirm     :   0/1 : flag to confirm remov
 
 chanSpec = [];
 confirm = 1;

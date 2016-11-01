@@ -34,13 +34,13 @@ if ~isempty(dataset.annLayer)
                 createAndAdd(dataset,layerName,eventTimesUSec,eventChannels,label)
             case 'append'
 
-                    [~,oldTimes,oldChannels] = getAnnotations(dataset,layerName);
-                    eventTimesUSec = [eventTimesUSec;oldTimes];
-                    eventChannels = [eventChannels;oldChannels];
-                    [~,tmp,~] = unique(eventTimesUSec(:,1));
-                    eventTimesUSec = eventTimesUSec(tmp,:);
-                    eventChannels = eventChannels(tmp);
-     
+                [~,oldTimes,oldChannels] = getAnnotations(dataset,layerName);
+                eventTimesUSec = [eventTimesUSec;oldTimes];
+                eventChannels = [eventChannels;oldChannels];
+                [~,tmp,~] = unique(eventTimesUSec(:,1));
+                eventTimesUSec = eventTimesUSec(tmp,:);
+                eventChannels = eventChannels(tmp);
+                dataset.removeAnnLayer(layerName);
                 createAndAdd(dataset,layerName,eventTimesUSec,eventChannels,label)
             otherwise
                 fprintf('Layer %s in %s exists, skipping dataset\n',layerName,dataset.snapName);
