@@ -4,7 +4,6 @@ function parsave(varargin)
 % First argument = save file name
 % Other arguments: strings of each variable to save
 % Usage: parsave('test.mat','subject','data','flag')
-    varargin
     savefile = varargin{1}; 
     for i=2:nargin
         tosave.(inputname(i)) = varargin{i}; %

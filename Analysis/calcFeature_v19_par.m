@@ -121,7 +121,7 @@ if (~isempty(features))
 
       %% RUNNN
 
-    for i = 1:numParBlocks
+    parfor i = 1:numParBlocks
         parsavename = sprintf('%s_wL%d_parblock2-%0.2d.mat',datasetFN,params.winLen,i);
         if exist(parsavename,'file') ~= 2
             %javaaddpath('../../Libraries/ieeg-matlab-1.13.2/IEEGToolbox/lib/ieeg-matlab.jar');

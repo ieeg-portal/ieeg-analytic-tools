@@ -1,4 +1,4 @@
-function [out, raw] = runFuncOnAnnotations(dataset,fun,varargin)
+function [yhat, yhat_score] = testModelOnAnnotations_par(dataset,layerName,model,fun,varargin)
 % Usage: out = runFuncOnAnnotations(layerName,fun)
 % Function will run provided function "fun" on annotations in layer
 % layerName in IEEGdataset dataset and return output in cell array out,
@@ -21,12 +21,11 @@ afterEndTime = 0;
 runOnWin = 0;
 highlightch = [];
 padsec = [];
-feature_feature_params = [];
+params = [];
 useAllCh = 0;
 timesUSec = [];
 eventChannels = [];
-layerName = [];
-for i = 1:2:nargin-2
+for i = 1:2:nargin-4
     switch varargin{i}
         case 'runOnWin'
             runOnWin = varargin{i+1};
@@ -36,58 +35,56 @@ for i = 1:2:nargin-2
             afterStartTime = varargin{i+1};
         case 'PadEndAfter'
             afterEndTime = varargin{i+1};
+        case 'fnparams'
+            params = varargin{i+1};
         case 'useAllChannels'
             useAllCh = varargin{i+1};
         case 'customTimeWindows'
             timesUSec = varargin{i+1}.eventTimesUSec;
             eventChannels = varargin{i+1}.eventChannels;
-        case 'layerName'
-            layerName = varargin{i+1};
-        case 'feature_params'
-            feature_params = varargin{i+1};
         otherwise
             error('Unknown parameter %s',varargin{i});
     end
 end
 if isempty(timesUSec)
-    if isempty(layerName)
-        error('Need either layername of custom time windows');
-    else
-        [~, timesUSec, eventChannels] = getAnnotations(dataset,layerName);
-    end
+    [~, timesUSec, eventChannels] = getAnnotations(dataset,layerName);
 end
-out = cell(size(timesUSec,1),1);
-raw = cell(size(timesUSec,1),1);
+N = size(timesUSec,1);
+out = cell(N,1);
 totalCh = numel(dataset.rawChannels);
 fs = dataset.sampleRate;
-for i = 1:size(timesUSec,1)
-    startPt = round((timesUSec(i,1)/1e6-beforeStartTime)*fs);
-    %endPt = round((timesUSec(i,1)/1e6+afterStartTime)*fs);
-    endPt = round((timesUSec(i,2)/1e6+afterEndTime)*fs);
-    if useAllCh
-        tmpDat = dataset.getvalues(startPt:endPt,1:totalCh);
-    else
-        tmpDat = dataset.getvalues(startPt:endPt,eventChannels{i});
-    end
-    %trim leading and trailing nans
-    tmpDat = tmpDat(~all(isnan(tmpDat),2),~all(isnan(tmpDat),1));
-    raw{i}.eeg = tmpDat;
-    raw{i}.times = [startPt/fs endPt/fs];
-    if runOnWin
-        if ~isempty(feature_params)
-            out{i} = runFuncOnWin(tmpDat,fs,fun,feature_params);
-        else
-            out{i} = runFuncOnWin(tmpDat,fs,fun);
-        end
-    else
-        %[r, c] = find(isnan(tmpDat));
-        %tmpDat(unique(r),:) = [];
-        if ~isempty(feature_params)
-            out{i} = fun(tmpDat,fs,feature_params);
-        else
-            out{i} = fun(tmpDat,fs);
-        end
-    end
-    continue
+
+numParBlocks = 200;
+numParProcs = 16;
+
+numPointsPerParBlock = N/ceil(numParBlocks);
+
+yhat = cell(numParBlocks,1);
+yhat_score = cell(numParBlocks,1);
+try
+parpool(numParProcs)
+catch
 end
+parDat = [];
+for i = 1:numParBlocks
+    parDat(i).eventTimesUSec = timesUSec(1+round((i-1)*numPointsPerParBlock):round(min(i*numPointsPerParBlock,N)),:);
+    parDat(i).eventChannels = eventChannels(1+round((i-1)*numPointsPerParBlock):round(min(i*numPointsPerParBlock,N)));
+end
+parfor i=1:numParBlocks
+    parsavename = sprintf('%s-testmodel-parsave%0.4d.mat',dataset.snapName,i);
+    if exist(parsavename,'file')~=2
+        session = IEEGSession(dataset.snapName,'hoameng','hoa_ieeglogin.bin');
+        fprintf('Working on parfor %d/%d...\n',i,numParBlocks);
+        feats = runFuncOnAnnotations(session.data,layerName,fun,'runOnWin',0,'useAllChannels',1,'customTimeWindows',parDat(i));
+        feats = cell2mat(feats);
+        parsave(parsavename,feats)
+    else
+        tmp = load(parsavename,'feats');
+        feats = tmp.feats;
+    end
+    [tmp_yhat, tmp_score] = predict(model,feats);
+    yhat{i} = cell2mat(cellfun(@(x)str2num(x),tmp_yhat,'UniformOutput',0));
+    yhat_score{i} = tmp_score;
+end
+%delete(h)
 

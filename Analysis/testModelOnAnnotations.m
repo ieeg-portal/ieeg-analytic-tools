@@ -49,13 +49,16 @@ end
 if isempty(timesUSec)
     [~, timesUSec, eventChannels] = getAnnotations(dataset,layerName);
 end
-out = cell(size(timesUSec,1),1);
-raw = cell(size(timesUSec,1),1);
+N = size(timesUSec,1);
+out = cell(N,1);
+raw = cell(N,1);
 totalCh = numel(dataset.rawChannels);
 fs = dataset.sampleRate;
-yhat = zeros(size(timesUSec,1),1);
-yhat_score = zeros(size(timesUSec,1),2);
-for i = 1:size(timesUSec,1)
+yhat = zeros(N,1);
+yhat_score = zeros(N,2);
+%h = waitbar(0,'Predicting windows...');
+reverseStr = '';
+for i = 1:N
     startPt = round((timesUSec(i,1)/1e6-beforeStartTime)*fs);
     %endPt = round((timesUSec(i,1)/1e6+afterStartTime)*fs);
     endPt = round((timesUSec(i,2)/1e6+afterEndTime)*fs);
@@ -86,6 +89,11 @@ for i = 1:size(timesUSec,1)
     [tmp_yhat, tmp_score] = predict(model,feat);
     yhat(i) = str2num(tmp_yhat{1});
     yhat_score(i,:) = tmp_score;
-    continue
+    %waitbar(i / size(timesUSec,1))
+   percentDone = 100 * i / N;
+   msg = sprintf('Percent done: %3.1f, Total Pos: %d, Iteration %d', percentDone,sum(yhat),i); %Don't forget this semicolon
+   fprintf([reverseStr, msg]);
+   reverseStr = repmat(sprintf('\b'), 1, length(msg));
 end
+%delete(h)
 

@@ -1,11 +1,13 @@
 
-function feats = features_comprehensive(data, fs)
+function feats = features_comprehensive(data, fs,varargin)
 
 %     %power from 1-48hz 
 %     freqRange = 1:48;
 %     P = pmtm(data,[],size(data,1),fs);
 %     feats = log10(abs(P(freqRange,:)))';
 %     feats = reshape(feats, 1,[]);
+
+
    nChan = size(data,2);
    if ~any(any(isnan(data))) 
         P = pmtm(data,[],1:fs/2,fs);
@@ -31,14 +33,27 @@ function feats = features_comprehensive(data, fs)
         [r,c] = find(acor == max(max(acor)));
         r =r(1);
         toadd = reshape(acor(r,:),size(data,2),[]);
-        toadd(find(~tril(ones(size(toadd)))))
-        toadd = triu(toadd,1);
-        toadd = toadd(toadd~=0)';
+        toadd = toadd(find(~tril(ones(size(toadd)))))';
         
-        %% add avg bandpower for each channel for spatial aspect
+        %% add wavelets for spike
+        scales = 1:60;
+        coeffs = zeros(size(data,2),numel(scales)*size(data,1));
+        for j = 1:size(data,2)
+            coeffs(j,:) = reshape(cwt(data,scales,'mexh'),1,numel(scales)*size(data,1));
+        end
+        coeffs = abs(coeffs);
+        norm_coeffs = bsxfun(@minus, coeffs, min(coeffs,[],2));
+        divnorm = (max(coeffs,[],2)-min(coeffs,[],2));
+        norm_coeffs = bsxfun (@rdivide, norm_coeffs, divnorm);
+%         colMeans = mean(spike_norm_coeffs);
+%         %sub colmeans
+%         spike_norm_coeffs_centered = bsxfun (@minus, spike_norm_coeffs, colMeans);
+%         [evectors, score, evalues] = pca(spike_norm_coeffs_centered);
+%         feats = score;
 
 
-        feats = [feats toadd fc bandpower(data)];
+        feats = [feats toadd fc bandpower(data) norm_coeffs];
+        info.cwtidx = size(feats,2)-numel(norm_coeffs);
     else
         feats = NaN(1,896);
     end
