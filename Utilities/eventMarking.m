@@ -20,14 +20,24 @@ function out = eventMarking(dataset,eventTimesUSec,eventChannels,varargin)
     
     %intelligent mode:
     %extract features from times, cluster using gap statistic, then
-    %randomly select to make sure each cluster is represented
+    randomly select to make sure each cluster is repredosented
     if intelligent
+        fprintf('Initiating intelligent mode...\n');
         tmp.eventTimesUSec = eventTimesUSec;
         tmp.eventChannels = eventChannels;
+        fprintf('Extracting features...\n');
         feats = runFuncOnAnnotations(dataset,@features_comprehensive,'feature_params',feature_params,'runOnWin',0,'useAllChannels',0,'customTimeWindows',tmp);
         feats = cell2mat(feats);
-        [a b c d] = pca(zscore(feats));
-        
+        fprintf('Running PCA...\n');
+        [coeff, score, latent, tsquared] = pca(feats);
+        E = evalclusters(score,'kmeans','Gap','klist',[2:10]);
+        idx = kmeans(score,5);
+        markers = {'r*','b*','g*','k*','c*'};
+        for i = 1:numel(E.OptimalK)
+            tmpdat = score(idx==i,:);
+            scatter3(tmpdat(:,1),tmpdat(:,2),tmpdat(:,3),markers{i});
+            hold on;
+        end
     end
     
     
