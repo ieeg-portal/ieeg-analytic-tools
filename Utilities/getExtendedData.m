@@ -1,25 +1,13 @@
 function data = getExtendedData(dataset,idxs, ch)
-<<<<<<< HEAD
-%Function will get data in pieces by channel if necessary, similar arguments as
-%getvalues
-
-% Note: if this function throws errors, try getting less data (reducing indices). 
-
-%dataset = IEEGDataset object
-%idxs = indices of data to get (numeric array)
-%ch = numeric array of channels
-
-=======
 %   Usage: data = getExtendedData(dataset,idxs, ch)
 %	
-%	dataset	-	IEEGDataset object
-%	idxs	-	string of name of annotation layer
-%	ch      -	array of idx
+%   dataset = IEEGDataset object
+%   idxs = indices of data to get (numeric array)
+%   ch = numeric array of channels
 %   Function will get data in pieces by channel if necessary, similar arguments as
 %   getvalues
 % Note: if this function throws errors, try getting less data (reducing indices). 
 
->>>>>>> 45667d6cb1273defd11272f8308fddcc159728fe
 total = numel(idxs)*numel(ch);
 dataLim = 500*130*2000;
 if total < dataLim
