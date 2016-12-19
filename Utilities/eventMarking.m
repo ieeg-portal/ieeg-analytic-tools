@@ -19,8 +19,8 @@ function out = eventMarking(dataset,eventTimesUSec,eventChannels,varargin)
     end
     
     %intelligent mode:
-    %extract features from times, cluster using gap statistic, then
-    randomly select to make sure each cluster is repredosented
+    % extract features from times, cluster using gap statistic, then
+    % randomly select to make sure each cluster is repredosented
     if intelligent
         fprintf('Initiating intelligent mode...\n');
         tmp.eventTimesUSec = eventTimesUSec;

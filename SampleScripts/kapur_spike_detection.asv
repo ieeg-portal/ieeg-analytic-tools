@@ -1,3 +1,14 @@
+%%
+% Script for spike detection through two stages
+% 1. Hypersensitive spike detection with Janca 2016 detector
+% 2. Second stage refinement through custom random forest classification
+%
+% Note: Requires portal matlab tools and IEEG Toolbox
+% 
+%
+% Hoameng Ung, PhD 2016
+% University of Pennsylvania
+% hoameng.ung@gmail.com
 
 %% Establish IEEG Sessions
 % Establish IEEG Sessions through the IEEGPortal. This will allow on demand

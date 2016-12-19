@@ -9,6 +9,10 @@ function [out, raw] = runFuncOnAnnotations(dataset,fun,varargin)
 %   layerName   :   layer name (string)
 %   fun         :   function handle to calculate features
 
+% Hoameng Ung
+% University of Pennsylvania
+% 12/6/2016
+
 %anonymous functions
 %EnergyFn = @(x) mean(x.^2);
 %ZCFn = @(x) sum((x(1:end-1,:)>repmat(mean(x),size(x,1)-1,1)) & x(2:end,:)<repmat(mean(x),size(x,1)-1,1) | (x(1:end-1,:)<repmat(mean(x),size(x,1)-1,1) & x(2:end,:)>repmat(mean(x),size(x,1)-1,1)));
@@ -21,7 +25,7 @@ afterEndTime = 0;
 runOnWin = 0;
 highlightch = [];
 padsec = [];
-feature_feature_params = [];
+feature_params = [];
 useAllCh = 0;
 timesUSec = [];
 eventChannels = [];
