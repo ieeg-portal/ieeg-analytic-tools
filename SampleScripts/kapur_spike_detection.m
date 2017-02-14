@@ -15,8 +15,10 @@
 % Establish IEEG Sessions through the IEEGPortal. This will allow on demand
 % data access
 
-%add folders to path
-addpath(genpath('../../../../Libraries/ieeg-matlab-1.13.2'));
+%add folders to path 
+addpath(genpath('../../../../Libraries/ieeg-matlab-1.13.2')); %path to ieeg portal matlab toolbox
+
+%these should point to portal-matlab-tools
 addpath(genpath('../portalGit/Analysis'))
 addpath(genpath('../portalGit/Utilities'))
 
