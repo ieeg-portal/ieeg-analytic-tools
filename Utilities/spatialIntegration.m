@@ -1,5 +1,5 @@
 function [eventTimesUSec, eventChannels] = spatialIntegration(allTimesUSec, allChannels,searchWin)
-%Usage: [eventTimeUSec, eventChannels] = spatialIntegration(spikeTimesUSec, spikeChannels,searchWin)
+%Usage: [eventTimeUSec, eventChannels] = spatialIntegration(allTimesUSec, allChannels,searchWin)
 % Function will take as input annotations and combine those searchWin[1]
 % before timesUSec and searchWin[2] after.
 
