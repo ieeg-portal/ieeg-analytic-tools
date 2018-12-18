@@ -35,6 +35,7 @@ if ~isempty(dataset.annLayer)
             case 'append'
                 [~,oldTimes,oldChannels] = getAnnotations(dataset,layerName);
                 if isempty(oldTimes)
+                    dataset.removeAnnLayer(layerName); %empty layer, remove
                     createAndAdd(dataset,layerName,eventTimesUSec,eventChannels,label)
                 else
                     eventTimesUSec = [eventTimesUSec;oldTimes];
