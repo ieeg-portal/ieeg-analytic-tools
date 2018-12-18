@@ -96,8 +96,7 @@ if (~isempty(features))
     numPointsPerParBlock = numPoints / numParBlocks;
     %calculate number of blocks
     numBlocks = ceil(numPointsPerParBlock/fs/blockLenSecs);
-
-
+    
     %try to open parpools
     try
         parpool(numParProcs)

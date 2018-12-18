@@ -1,4 +1,4 @@
-function calcFeature_v19_par(dataset,channels,params,allFeatures,varargin)
+function calcFeature_v18_par(dataset,channels,params,allFeatures,varargin)
 %Usage: calcFeature_v19_par(dataset,params,allFeatures)
 %This function will divide IEEGDataset channels into blocks of
 %and within these blocks further divide into winLen. Features

@@ -1,4 +1,4 @@
-function calcFeature_v19_par(dataset,channels,params,allFeatures,varargin)
+function outPrefix = calcFeature_v19_par(dataset,channels,params,allFeatures,varargin)
 %Usage: calcFeature_v19_par(dataset,params,allFeatures)
 %This function will divide IEEGDataset channels into blocks of
 %and within these blocks further divide into winLen. Features
@@ -46,8 +46,8 @@ function calcFeature_v19_par(dataset,channels,params,allFeatures,varargin)
 % 3/24/2015    v15 - added hwamp
 % 6/13/2016 -  v16 - added RMS
 % 7/28/2016 -   v17 -   added save for each block
-numParBlocks = 1; %% NUMBER OF PARALLEL BLOCKS
-numParProcs = 1; % NUMBER OF WORKERS
+numParBlocks = 6; %% NUMBER OF PARALLEL BLOCKS
+numParProcs = 6; % NUMBER OF WORKERS
 blockLenSecs = params.blockLen; %get data in blocks
 for i = 1:numel(allFeatures)
     allFeatures{i} = lower(allFeatures{i});
@@ -121,7 +121,7 @@ if (~isempty(features))
 
       %% RUNNN
 
-    parfor i = 1:numParBlocks
+    for i = 1:numParBlocks
         parsavename = sprintf('%s_wL%d_parblock2-%0.2d.mat',datasetFN,params.winLen,i);
         if exist(parsavename,'file') ~= 2
             %javaaddpath('../../Libraries/ieeg-matlab-1.13.2/IEEGToolbox/lib/ieeg-matlab.jar');
@@ -327,7 +327,8 @@ if (~isempty(features))
             for i = 1:numel(allParFeats)
                 parFeats = [parFeats; allParFeats{i}{z}];
             end
-            save(sprintf('%s_wL%d_feat-%s.mat',datasetFN,params.winLen,features{f}),'parFeats','-v7.3');
+            outPrefix = sprintf('%s_wL%d_feat.mat',datasetFN,params.winLen);
+            save(sprintf('%s-%s.mat',outPrefix,features{f}),'parFeats','-v7.3');
             z = z +1;
         end
     end

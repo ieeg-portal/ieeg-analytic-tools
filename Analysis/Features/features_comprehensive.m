@@ -18,11 +18,12 @@ for i = 1:numel(params)
             calcCorr = 1;
         case 'cwt'
             calcCWT = 1;
+        case 'LL'
+            calcLL = 1;
         otherwise
             error('Unknown parameter %s',varargin{i});
     end
 end
-
    nChan = size(data,2);
    if ~any(any(isnan(data))) 
         feats = [];
@@ -66,6 +67,8 @@ end
             norm_coeffs = bsxfun (@rdivide, norm_coeffs, divnorm);
             feats = [feats norm_coeffs];
         end
+        if calcLL
+            
     else
         feats = NaN(1,896); %need to generalize default size
     end
