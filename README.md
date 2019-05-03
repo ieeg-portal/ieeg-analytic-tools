@@ -5,7 +5,7 @@ This repository contains various matlab scripts to manipulate data and annotatio
 
 CONTENTS ARE IN DEVELOPMENT. At this stage the scripts should serve more as examples for data analysis within Matlab. We are currently modifying all scripts to take in common input/outputs for a more streamlined pipeline.
 
-Please contact hoameng@upenn.edu with any questions, bugs, suggestions, etc! I would also request any scripts for analysis (detectors, etc) so they can be incorporated into this toolbox.
+Please contact hoameng.ung@gmail.com with any questions, bugs, suggestions, etc! I would also request any scripts for analysis (detectors, etc) so they can be incorporated into this toolbox.
 
 
 Utilities
